@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel='stylesheet' href='/bootstrap/css/bootstrap.min.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <style>
+        pre {outline: 1px solid #ccc; padding: 5px; margin: 5px;}
+        .string { color: green; }        /*字符串的样式*/
+        .number { color: darkorange; }    /*数字的样式*/
+        .boolean { color: blue; }        /*布尔型数据的样式*/
+        .null { color: magenta; }        /*null值的样式*/
+        .key { color: red; }            /*key值的样式*/
+    </style>
+</head>
+<body>
+<div id="nav">
+    <div class="container">
+        <nav class="navbar navbar-inverse" role="navigation">
+            <div class="container-fluid head">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">MQTT订阅调试程序--格式化数据</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+<div class="container content">
+    <div class="row">
+        <h2>原数据：</h2>
+        <pre id="a"><%=msg%></pre>
+        <h2>格式化后：</h2>
+        <pre id="result" style="background: #000;color: #fff"></pre>
+    </div>
+</div>
+<script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src='/bootstrap/js/bootstrap.min.js'></script>
+<script>
+    function syntaxHighlight(json) {
+        if (typeof json != 'string') {
+            json = JSON.stringify(json, undefined, 2);
+        }
+        json = json.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+            var cls = 'number';
+            if (/^"/.test(match)) {
+                if (/:$/.test(match)) {
+                    cls = 'key';
+                } else {
+                    cls = 'string';
+                }
+            } else if (/true|false/.test(match)) {
+                cls = 'boolean';
+            } else if (/null/.test(match)) {
+                cls = 'null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+        })
+    }
+    var _jsonData = JSON.parse($("#a").text());
+    $('#result').html(syntaxHighlight(_jsonData));
+</script>
+</body>
+</html>

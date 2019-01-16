@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel='stylesheet' href='/bootstrap/css/bootstrap.min.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <div id="nav">
+      <div class="container">
+        <nav class="navbar navbar-inverse" role="navigation">
+            <div class="container-fluid head">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">MQTT订阅调试程序</a>
+            </div>
+            </div>
+        </nav>
+      </div>
+    </div>
+    <div class="container content">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-primary">
+              <div class="panel-heading">
+                  <h3 class="panel-title">订阅一个主题</h3>
+              </div>
+              <div class="panel-body">
+                  
+                <form class="bs-example bs-example-form" role="form" method="post" action="/addTopic">
+                    <div>
+                      <div class="col-md-12">
+                          <div class="input-group">
+                              <input type="text" class="form-control" name="name">
+                              <span class="input-group-btn">
+                                  <button class="btn btn-info" type="submit">添加主题</button>
+                              </span>
+                          </div>
+                      </div>
+                    </div>
+                </form>
+                  <br/>
+                  <br/>
+                <form class="bs-example bs-example-form" role="form" action="/s">
+                   <div>
+                      <div class="col-md-12">
+                          <div class="input-group">
+                              <input type="text" class="form-control" name="name">
+                              <span class="input-group-btn">
+                              <button class="btn btn-success" type="submit">搜索主题</button>
+                          </span>
+                          </div>
+                      </div>
+                   </div>
+                  </form>
+           
+              </div>
+          </div>
+        </div>
+      </div>
+      <table class="table table-bordered table-hover">
+        <caption class="table_caption">正在订阅的主题</caption>
+        <thead>
+          <tr>
+            <th>编号</th>
+            <th>主题</th>
+            <th>订阅时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% topics.forEach(function(item){ %>
+        <tr>
+          <td><%=item.id%></td>
+          <td><%=item.name %></td>
+          <td><%=""?'--':new Date((item.created_at) * 1000).toLocaleString().replace(new RegExp('/','g'),"-")%></td>
+          <td>
+            <a class="btn btn-info" href="/log?name=<%=item.name%>">查看日志</a>
+              <% if (item.status == 1) {%>
+              <a class="btn btn-warning" href="/unTopic?name=<%=item.name %>">停止订阅</a>
+              <% } else { %>
+              <form style="display:-webkit-inline-box" role="form" method="post" action="/addTopic">
+                  <input type="hidden" class="form-control" name="name" value="<%=item.name %>">
+                  <button class="btn btn-success" type="submit">开始订阅</button>
+              </form>
+              <a href="/delete?name=<%=item.name %>" class="btn btn-danger">删除主题</a>
+              <% } %>
+          </td>
+        </tr>
+        <% }) %>
+        </tbody>
+      </table>
+        <div class="row" style="text-align: center">
+            <ul id='bp-element'></ul>
+        </div>
+    </div>
+
+    <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src='/bootstrap/js/bootstrap.min.js'></script>
+    <script src='/bootstrap/js/bootstrap-paginator.js'></script>
+    <script type="text/javascript">
+        $(function(){
+
+                var element = $('#bp-element');
+                options = {
+                    bootstrapMajorVersion:3, //对应的bootstrap版本
+                    currentPage: <%=currentPage%> , //当前页数，这里是用的EL表达式，获取从后台传过来的值
+                    numberOfPages: 5, //每页页数
+                    totalPages: <%=totalPages%>, //总页数，这里是用的EL表达式，获取从后台传过来的值
+                    shouldShowPage:true,//是否显示该按钮
+                    itemTexts: function (type, page, current) {//设置显示的样式，默认是箭头
+                        switch (type) {
+                            case "first":
+                                return "首页";
+                            case "prev":
+                                return "上一页";
+                            case "next":
+                                return "下一页";
+                            case "last":
+                                return "末页";
+                            case "page":
+                                return page;
+                        }
+                    },
+                    //点击事件
+                    onPageClicked: function (event, originalEvent, type, page) {
+                        location.href = "/?p=" + page + "&limit=" + 10;
+                    }
+                };
+                element.bootstrapPaginator(options);
+
+        });
+    </script>
+  </body>
+</html>

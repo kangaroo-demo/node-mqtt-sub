@@ -1,0 +1,20 @@
+
+#nav{
+	background: #222;
+}
+
+.navbar{
+	margin-bottom: 0;
+	border: 0;
+}
+.head {
+	padding-left: 0;
+}
+.content{
+	margin-top:20px;
+}
+
+.table_caption{
+	font-size: 24px;
+    font-weight: bold;
+}
